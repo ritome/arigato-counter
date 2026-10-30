@@ -43,6 +43,8 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 500; letter-spacing: 
   background: var(--surface); display: grid; place-items: center; cursor: pointer;
 }
 .icon-btn svg { width: 20px; height: 20px; fill: var(--muted); }
+.icon-btn svg.stroke { fill: none; stroke: var(--muted); stroke-width: 2.2; stroke-linecap: round; }
+.top-actions { display: flex; gap: 8px; }
 
 /* 合計とタップ */
 .hero { display: flex; flex-direction: column; align-items: center; gap: 14px; }
@@ -156,7 +158,7 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 500; letter-spacing: 
 }
 @keyframes bloomIn { from { transform: scale(.2) rotate(-40deg); opacity: 0; } }
 
-.foot { display: flex; justify-content: center; }
+.foot { display: flex; justify-content: center; gap: 12px; }
 .link { background: none; border: none; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; font-size: .85rem; cursor: pointer; padding: 8px; }
 
 /* ダイアログ */

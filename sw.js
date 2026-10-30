@@ -1,12 +1,13 @@
 // オフライン対応。アプリ本体は先にまとめてキャッシュし、更新はバージョンを上げて配る。
 // ファイルを変更したら VERSION を上げること。
-const VERSION = 'v4';
+const VERSION = 'v5';
 const APP_CACHE = `arigato-app-${VERSION}`;
 const FONT_CACHE = 'arigato-fonts';
 
 const APP_FILES = [
   './',
   'index.html',
+  'help.html',
   'styles.css',
   'manifest.webmanifest',
   'js/main.js',
@@ -60,7 +61,10 @@ self.addEventListener('fetch', (e) => {
 
   // ページ遷移：HTML と JS の版をそろえるため、これもキャッシュ優先
   if (req.mode === 'navigate') {
-    e.respondWith(caches.match('index.html').then((hit) => hit || fetch(req)));
+    e.respondWith(
+      caches.match(req, { ignoreSearch: true })
+        .then((hit) => hit || fetch(req).catch(() => caches.match('index.html'))),
+    );
     return;
   }
 

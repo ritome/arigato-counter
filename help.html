@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>使い方 | ありがとうカウンター</title>
+<meta name="description" content="ありがとうカウンターの使い方">
+<meta name="theme-color" content="#F3F6F2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1C2420" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/favicon-64.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500&family=Zen+Maru+Gothic:wght@500;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .guide { gap: 18px; }
+  .guide .top a.icon-btn { text-decoration: none; color: inherit; }
+  .lead { margin: 0; font-size: .95rem; }
+  .guide .toc { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 0; padding: 0; list-style: none; }
+  .toc a {
+    display: block; padding: 8px 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line);
+    color: var(--fg); text-decoration: none; font-size: .85rem;
+  }
+  .toc a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .guide section.card { scroll-margin-top: 16px; }
+  .guide h2 { display: flex; align-items: center; gap: 8px; font-size: 1.05rem; }
+  .guide h2 .no {
+    display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%;
+    background: var(--accent-soft); color: var(--accent-strong); font-size: .85rem; flex: none;
+  }
+  .guide h3 { font-size: .95rem; margin-top: 4px; }
+  .guide p, .guide li { font-size: .9rem; }
+  .guide p { margin: 0; }
+  .guide ol, .guide ul { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 4px; }
+  .note {
+    margin: 0; padding: 10px 12px; border-radius: 12px; font-size: .85rem;
+    background: color-mix(in srgb, var(--gold) 14%, var(--surface)); border: 1px solid color-mix(in srgb, var(--gold) 35%, var(--line));
+  }
+  .note b { color: var(--fg); }
+  .ui {
+    display: inline-block; padding: 0 8px; border-radius: 999px; border: 1px solid var(--line);
+    background: var(--bg); font-size: .82rem; white-space: nowrap;
+  }
+  .milestones { width: 100%; border-collapse: collapse; font-size: .86rem; }
+  .milestones th, .milestones td { text-align: left; padding: 7px 4px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .milestones th { font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .flowers { display: flex; gap: 6px; justify-content: center; }
+  .flowers svg { width: 40px; height: 40px; }
+  details { border-top: 1px solid var(--line); padding: 10px 0 2px; }
+  details:first-of-type { border-top: none; padding-top: 0; }
+  summary { cursor: pointer; font-weight: 700; font-size: .9rem; list-style-position: outside; }
+  details > p, details > ul { margin-top: 6px; }
+  .back { display: flex; justify-content: center; }
+  .back a { text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="app guide">
+  <header class="top">
+    <div>
+      <h1>使い方</h1>
+      <p class="date">ありがとうカウンター</p>
+    </div>
+    <a class="icon-btn" href="./" aria-label="アプリにもどる">
+      <svg viewBox="0 0 24 24" aria-hidden="true" style="fill:none;stroke:var(--muted);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </a>
+  </header>
+
+  <p class="lead">「ありがとう」と声に出すたびに数が増えていくアプリです。1万回ごとに花が1輪ずつ咲き、50万回で50輪の花畑が満開になります。毎日少しずつ、気長に続けてください。</p>
+
+  <nav aria-label="目次">
+    <ul class="toc">
+      <li><a href="#install">1. ホーム画面に置く</a></li>
+      <li><a href="#count">2. 数える</a></li>
+      <li><a href="#screen">3. 画面の見かた</a></li>
+      <li><a href="#celebrate">4. お祝いと花</a></li>
+      <li><a href="#reward">5. ごほうびメモ</a></li>
+      <li><a href="#fix">6. 数を直す</a></li>
+      <li><a href="#save">7. 記録とバックアップ</a></li>
+      <li><a href="#reset">8. リセット・設定</a></li>
+      <li><a href="#faq">9. こまったとき</a></li>
+    </ul>
+  </nav>
+
+  <section class="card" id="install">
+    <h2><span class="no">1</span>ホーム画面に置く</h2>
+    <p>ホーム画面に置くと、アプリのように全画面で開けます。電波のない場所でも開けます。</p>
+    <h3>iPhone（Safari）</h3>
+    <ol>
+      <li>Safari でこのアプリのページを開く</li>
+      <li>画面下の共有ボタン（四角から上向きの矢印）を押す</li>
+      <li>「ホーム画面に追加」→「追加」</li>
+    </ol>
+    <h3>Android（Chrome）</h3>
+    <ol>
+      <li>Chrome でこのアプリのページを開く</li>
+      <li>「アプリをインストール」の案内を押す（出ないときは右上の︙ →「ホーム画面に追加」）</li>
+    </ol>
+  </section>
+
+  <section class="card" id="count">
+    <h2><span class="no">2</span>数える</h2>
+    <h3>声で数える</h3>
+    <ol>
+      <li><span class="ui">🎙 声でかぞえる</span> を押す（初めてのときはマイクの使用を「許可」）</li>
+      <li>「ありがとう」と言うと、1回ずつ数が増えます</li>
+      <li>終わるときは、もう一度ボタンを押して止めます</li>
+    </ol>
+    <p>「ありがとうございます」も1回と数えます。「ありがとう、ありがとう」と続けて言えば2回です。聞き取った言葉はボタンの下に表示されるので、うまく数えられているか確かめられます。聞いている間は画面が暗くなりにくくなります。</p>
+    <p class="note"><b>声で数えるにはインターネット接続が必要です。</b>電波のないところでは、タップで数えてください。</p>
+    <h3>タップで数える</h3>
+    <p>まんなかの大きなまる（<span class="ui">タップで ＋1</span>）を押すたびに1回増えます。声を出しにくい場所や、心の中で唱えたときに。</p>
+  </section>
+
+  <section class="card" id="screen">
+    <h2><span class="no">3</span>画面の見かた</h2>
+    <ul>
+      <li><b>まんなかの数字</b>：これまでの「ありがとう」の合計</li>
+      <li><b>まるのまわりのピンクの輪</b>：次の花が咲くまでの進み具合。1万回でひとまわりします</li>
+      <li><b>次の花 ○○ まで あと △回</b>：次に咲く花の名前と、残りの回数</li>
+      <li><b>今日／咲いた花／50万回まで</b>：今日の回数、咲いた花の数、目標までの達成度</li>
+      <li><b>この1週間</b>：直近7日の回数のグラフ。今日はピンクの棒です</li>
+      <li><b>ありがとうの花畑</b>：50個の区画に、1万回ごとに花が咲いていきます。ピンクの枠は次に咲く場所で、数が増えるとつぼみが育ちます</li>
+    </ul>
+    <p>日付が変わると「今日」は0にもどります。合計とグラフにはそれまでの分がすべて積み上がっています。</p>
+  </section>
+
+  <section class="card" id="celebrate">
+    <h2><span class="no">4</span>お祝いと花</h2>
+    <p>節目の回数になると、お祝いが出ます。</p>
+    <table class="milestones">
+      <tbody>
+        <tr><th>100回</th><td>小さな芽が出るお祝い</td></tr>
+        <tr><th>500回</th><td>葉っぱが育つお祝い</td></tr>
+        <tr><th>1,000回</th><td>つぼみがふくらむお祝い</td></tr>
+        <tr><th>2,000回〜</th><td>1,000回ごとに「キリ番」のお知らせ</td></tr>
+        <tr><th>1万回ごと</th><td>花が1輪咲いて、花びらが舞う大きなお祝い</td></tr>
+        <tr><th>50万回</th><td>50輪の花畑が満開になるフィナーレ</td></tr>
+      </tbody>
+    </table>
+    <div class="flowers" id="flowerSamples" aria-hidden="true"></div>
+    <p>花はたんぽぽ、すみれ、さくら、ひまわり、つばき…と、1輪ずつ違います。どの花が咲くかはお楽しみに。最後の50輪目は「ありがとうの大輪」です。</p>
+  </section>
+
+  <section class="card" id="reward">
+    <h2><span class="no">5</span>ごほうびメモ</h2>
+    <p>花畑の花やつぼみを押すと、その花が咲いたときの「自分へのごほうび」をメモできます。</p>
+    <ul>
+      <li>まだ咲いていない花にも書けます。「1万回になったらケーキを買う」のように、先に決めておくと励みになります</li>
+      <li>メモのある花には、右上に金色の点がつきます</li>
+      <li>花が咲いたお祝いの画面に、メモしたごほうびが表示されます</li>
+      <li>メモがないときは、お祝い画面の <span class="ui">ごほうびを決める</span> からすぐ書けます</li>
+    </ul>
+  </section>
+
+  <section class="card" id="fix">
+    <h2><span class="no">6</span>数を直す</h2>
+    <h3>ひとつ戻す</h3>
+    <p>まちがえて数えたときは <span class="ui">ひとつ戻す</span> を押すと、最後の1回分が戻ります。まとめて足した分は、まとめて1回で戻ります（ボタンに「−100」のように戻る数が出ます）。続けて押すと、さらに前の操作も戻せます。</p>
+    <h3>まとめて足す</h3>
+    <p>ほかの場所で数えた分などは <span class="ui">まとめて足す</span> から入れられます。回数を入力するか、<span class="ui">+10</span> <span class="ui">+100</span> などのボタンで足して「足す」を押します。今日の回数に加わります。</p>
+  </section>
+
+  <section class="card" id="save">
+    <h2><span class="no">7</span>記録とバックアップ</h2>
+    <p>数えた記録はスマホの中に自動で保存されます。<b>アプリを閉じても、スマホを再起動しても、数は元に戻りません。</b>次に開いたときは、続きから数えられます。</p>
+    <p class="note"><b>次のときは記録が消えます。</b>ホーム画面のアイコンを削除したとき、ブラウザの「履歴とWebサイトデータ」を消したとき、機種変更をしたとき。</p>
+    <p class="note"><b>iPhone では、ホーム画面のアプリと Safari のタブで記録が別々です。</b>どちらか一方で使うのがおすすめです。Android は共通です。</p>
+    <h3>バックアップ</h3>
+    <p>右上の <span class="ui">…</span> から「設定とバックアップ」を開きます。</p>
+    <ul>
+      <li><span class="ui">ファイルに保存</span>：記録をファイル（.json）としてスマホに保存します</li>
+      <li><span class="ui">文字でコピー</span>：記録を文字としてコピーします。メモアプリやメールに貼りつけて保管できます</li>
+    </ul>
+    <h3>復元（記録を戻す・移す）</h3>
+    <ul>
+      <li><span class="ui">ファイルから復元</span>：保存したファイルを選びます</li>
+      <li><span class="ui">文字を貼りつけて復元</span>：コピーした文字を貼りつけて「この内容で復元」</li>
+    </ul>
+    <p>復元すると、今の記録はバックアップの内容に置きかわります（実行前に確認が出ます）。機種変更のときは、古いスマホでバックアップを作り、新しいスマホで復元してください。</p>
+  </section>
+
+  <section class="card" id="reset">
+    <h2><span class="no">8</span>リセット・設定</h2>
+    <h3>リセット（数をゼロに戻す）</h3>
+    <ol>
+      <li><span class="ui">…</span> →「リセット」の <span class="ui">数をゼロに戻す…</span> を押す</li>
+      <li>消える内容を確かめる。ごほうびメモを残すかどうか選べます（はじめは「残す」）</li>
+      <li><span class="ui">ゼロに戻す</span> を押す</li>
+    </ol>
+    <p>まちがえてリセットしたときは、<span class="ui">リセット前に戻す</span> で元に戻せます。戻せるのは直前のリセット1回分だけです。</p>
+    <h3>音と振動</h3>
+    <p><span class="ui">…</span> の「お祝いの音」「振動」で、それぞれ切りかえられます。</p>
+  </section>
+
+  <section class="card" id="faq">
+    <h2><span class="no">9</span>こまったとき</h2>
+    <details>
+      <summary>声で数えてくれない</summary>
+      <ul>
+        <li>インターネットにつながっているか確かめてください</li>
+        <li>マイクが「許可」になっているか確かめてください（iPhone：設定 → Safari → マイク／Android：Chrome のサイト設定 → マイク）</li>
+        <li>iPhone でホーム画面から開いたときに声で数えられない場合は、Safari のタブで開いて使ってください（記録は別々になります）</li>
+        <li>まわりが騒がしいと聞き取れないことがあります。ボタンの下に聞き取った言葉が出るので、確かめながら話してみてください</li>
+      </ul>
+    </details>
+    <details>
+      <summary>声で数えている途中で止まってしまう</summary>
+      <p>聞き取りが何度も続けて失敗すると、自動で止まります。もう一度 <span class="ui">声でかぞえる</span> を押してください。</p>
+    </details>
+    <details>
+      <summary>多く数えすぎた・少なかった</summary>
+      <p>多いときは <span class="ui">ひとつ戻す</span>、少ないときは <span class="ui">まとめて足す</span> で直せます。</p>
+    </details>
+    <details>
+      <summary>音が鳴らない</summary>
+      <p>スマホのマナーモードや音量を確かめてください。iPhone では、一度タップしてからでないと音が鳴らないことがあります。</p>
+    </details>
+    <details>
+      <summary>新しい機能が出てこない</summary>
+      <p>アプリを一度開くと、裏で新しい版が読み込まれます。いったん閉じて、もう一度開いてください。</p>
+    </details>
+  </section>
+
+  <div class="back"><a class="pill primary" href="./">アプリにもどる</a></div>
+</div>
+<script type="module">
+  import { flowerSVG } from './js/flowers.js';
+  document.getElementById('flowerSamples').innerHTML = [0, 4, 13, 26, 49].map((i) => flowerSVG(i)).join('');
+</script>
+</body>
+</html>
