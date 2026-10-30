@@ -65,6 +65,14 @@ export function undo(state) {
   return last;
 }
 
+/** 数をゼロに戻した新しい記録を返す。設定は引き継ぎ、ごほうびメモは keepRewards なら残す */
+export function reset(state, { keepRewards = true } = {}) {
+  const s = emptyState();
+  s.settings = { ...state.settings };
+  if (keepRewards) s.rewards = { ...state.rewards };
+  return s;
+}
+
 /** 読み込んだデータ（保存済み・バックアップ・旧版）を検証して整える。不正なら例外 */
 export function normalize(raw) {
   if (!raw || typeof raw !== 'object') throw new Error('データの形式がちがいます');

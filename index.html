@@ -150,6 +150,22 @@
     </div>
     <p class="muted small" id="backupMsg" role="status"></p>
 
+    <h4>リセット</h4>
+    <p class="muted">数をゼロに戻して、はじめから数えなおします。</p>
+    <div class="stack">
+      <button type="button" class="pill danger-outline" id="resetToggle">数をゼロに戻す…</button>
+      <button type="button" class="pill" id="undoResetBtn" hidden></button>
+    </div>
+    <div class="danger-box" id="resetBox" hidden>
+      <p class="danger-text" id="resetSummary"></p>
+      <label class="toggle"><input type="checkbox" id="keepRewards" checked><span>ごほうびメモは残す</span></label>
+      <div class="stack">
+        <button type="button" class="pill danger" id="resetConfirm">ゼロに戻す</button>
+        <button type="button" class="pill" id="resetCancel">やめる</button>
+      </div>
+    </div>
+    <p class="muted small" id="resetMsg" role="status"></p>
+
     <div class="dialog-actions">
       <button class="pill" value="close">閉じる</button>
     </div>

@@ -1,5 +1,5 @@
 import {
-  GOAL, FLOWER_STEP, FLOWER_COUNT, load, save, add, undo, totalOf, bloomedCount, dayKey, normalize,
+  GOAL, FLOWER_STEP, FLOWER_COUNT, STORAGE_KEY, load, save, add, undo, reset, totalOf, bloomedCount, dayKey, normalize,
 } from './store.js';
 import { crossed, EARLY } from './milestones.js';
 import { FLOWERS, flowerSVG, budSVG, ICONS } from './flowers.js';
@@ -203,7 +203,10 @@ function openMenu() {
   $('soundToggle').checked = state.settings.sound;
   $('vibrateToggle').checked = state.settings.vibrate;
   $('backupMsg').textContent = '';
+  $('resetMsg').textContent = '';
   $('pasteBox').hidden = true;
+  $('resetBox').hidden = true;
+  renderUndoReset();
   menuDialog.showModal();
 }
 $('menuBtn').addEventListener('click', openMenu);
@@ -265,6 +268,57 @@ $('pasteToggle').addEventListener('click', () => {
   if (!$('pasteBox').hidden) { $('pasteInput').value = ''; $('pasteInput').focus(); }
 });
 $('pasteRestore').addEventListener('click', () => restoreFrom($('pasteInput').value));
+
+// ---------- リセット ----------
+// 直前の記録を1つだけ取っておき、まちがえて消しても戻せるようにする
+const BEFORE_RESET_KEY = `${STORAGE_KEY}/before-reset`;
+function beforeReset() {
+  try {
+    const text = localStorage.getItem(BEFORE_RESET_KEY);
+    return text ? normalize(JSON.parse(text)) : null;
+  } catch {
+    return null;
+  }
+}
+function renderUndoReset() {
+  const prev = beforeReset();
+  $('undoResetBtn').hidden = !prev;
+  if (prev) $('undoResetBtn').textContent = `リセット前に戻す（${fmt(totalOf(prev))} 回）`;
+}
+
+$('resetToggle').addEventListener('click', () => {
+  const box = $('resetBox');
+  box.hidden = !box.hidden;
+  if (box.hidden) return;
+  const total = totalOf(state);
+  $('resetSummary').textContent = `合計 ${fmt(total)} 回・咲いた花 ${bloomedCount(total)} 輪・1週間のグラフをすべてゼロに戻します。`;
+  $('keepRewards').checked = true;
+  $('resetMsg').textContent = '';
+});
+$('resetCancel').addEventListener('click', () => { $('resetBox').hidden = true; });
+$('resetConfirm').addEventListener('click', () => {
+  try {
+    localStorage.setItem(BEFORE_RESET_KEY, JSON.stringify(state));
+  } catch { /* 取っておけなくてもリセットは続ける */ }
+  state = reset(state, { keepRewards: $('keepRewards').checked });
+  save(state);
+  render();
+  $('resetBox').hidden = true;
+  renderUndoReset();
+  $('resetMsg').textContent = 'ゼロに戻しました。まちがえたときは「リセット前に戻す」で戻せます';
+});
+$('undoResetBtn').addEventListener('click', () => {
+  const prev = beforeReset();
+  if (!prev) return;
+  const now = totalOf(state);
+  if (now > 0 && !confirm(`リセットのあとに数えた ${fmt(now)} 回は消えて、リセット前の ${fmt(totalOf(prev))} 回に戻ります。よろしいですか？`)) return;
+  state = prev;
+  save(state);
+  localStorage.removeItem(BEFORE_RESET_KEY);
+  render();
+  renderUndoReset();
+  $('resetMsg').textContent = `リセット前の記録（${fmt(totalOf(state))} 回）に戻しました`;
+});
 
 // ---------- 音声 ----------
 let wakeLock = null;

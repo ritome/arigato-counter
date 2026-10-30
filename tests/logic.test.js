@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { emptyState, add, undo, totalOf, normalize, dayKey, bloomedCount } from '../js/store.js';
+import { emptyState, add, undo, totalOf, normalize, dayKey, bloomedCount, reset } from '../js/store.js';
 import { crossed } from '../js/milestones.js';
 
 test('足すと今日と合計が増え、ひとつ戻すで最後の操作だけ戻る', () => {
@@ -71,4 +71,19 @@ test('復元: 不正な値を捨て、旧版の形式も読める', () => {
   assert.equal(bloomedCount(totalOf(s)), 1);
   assert.throws(() => normalize(null));
   assert.throws(() => normalize({ foo: 1 }));
+});
+
+test('リセット: 数と履歴は消え、設定は残り、メモは選べる', () => {
+  const s = emptyState();
+  add(s, 12345, 'bulk');
+  s.rewards[1] = 'ケーキ';
+  s.settings.sound = false;
+  const kept = reset(s);
+  assert.equal(totalOf(kept), 0);
+  assert.deepEqual(kept.log, []);
+  assert.deepEqual(kept.bloomedOn, {});
+  assert.deepEqual(kept.rewards, { 1: 'ケーキ' });
+  assert.equal(kept.settings.sound, false);
+  assert.deepEqual(reset(s, { keepRewards: false }).rewards, {});
+  assert.equal(totalOf(s), 12345); // 元の記録は書きかえない
 });

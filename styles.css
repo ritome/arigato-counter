@@ -1,7 +1,7 @@
 :root {
   --bg: #F3F6F2; --surface: #FFFFFF; --fg: #2E3A33; --muted: #6F7E75;
   --accent: #E0607E; --accent-strong: #C9466A; --accent-soft: #FBE3E9;
-  --leaf: #5E9C76; --line: #DCE5DE; --soil: #E8EDE6; --gold: #E8A93A;
+  --leaf: #5E9C76; --line: #DCE5DE; --soil: #E8EDE6; --gold: #E8A93A; --danger: #C0392B;
   --shadow: 0 1px 2px rgba(46, 58, 51, .06), 0 8px 24px rgba(46, 58, 51, .07);
   --display: "Kiwi Maru", "Zen Maru Gothic", "Hiragino Maru Gothic ProN", sans-serif;
   --body: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Hiragino Sans", "Noto Sans JP", sans-serif;
@@ -11,7 +11,7 @@
   :root:not([data-theme="light"]) {
     --bg: #1C2420; --surface: #26302A; --fg: #EAF1EC; --muted: #9DB0A4;
     --accent: #F28AA3; --accent-strong: #F6A3B7; --accent-soft: #4A2A33;
-    --leaf: #86C39D; --line: #34413A; --soil: #2E3933; --gold: #F2C063;
+    --leaf: #86C39D; --line: #34413A; --soil: #2E3933; --gold: #F2C063; --danger: #F07A6A;
     --shadow: 0 1px 2px rgba(0, 0, 0, .2), 0 8px 24px rgba(0, 0, 0, .25);
     color-scheme: dark;
   }
@@ -189,6 +189,13 @@ h1, h2, h3, h4 { font-family: var(--display); font-weight: 500; letter-spacing: 
 .toggles { display: flex; flex-direction: column; gap: 6px; }
 .toggle { display: flex; align-items: center; gap: 10px; font-size: .92rem; cursor: pointer; }
 .toggle input { width: 20px; height: 20px; accent-color: var(--accent); }
+.pill.danger-outline { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 45%, var(--line)); }
+.pill.danger { background: var(--danger); border-color: var(--danger); color: #fff; font-weight: 700; }
+.danger-box {
+  display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; border-radius: 14px;
+  background: color-mix(in srgb, var(--danger) 9%, var(--surface)); border: 1px solid color-mix(in srgb, var(--danger) 30%, var(--line));
+}
+.danger-text { margin: 0; font-size: .86rem; }
 .reward-art { display: grid; place-items: center; }
 .reward-art svg { width: 84px; height: 84px; }
 
