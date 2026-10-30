@@ -401,6 +401,49 @@ render();
 
 // 開発中（localhost）はキャッシュが邪魔になるので登録しない。?sw を付けるとオフライン動作を確認できる
 const isDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+const UPDATED_KEY = 'arigato-counter/updated';
 if ('serviceWorker' in navigator && (!isDev || location.search.includes('sw'))) {
-  navigator.serviceWorker.register('sw.js').catch((e) => console.warn('Service Worker 登録失敗', e));
+  setupUpdates();
+}
+
+// ---------- 新しい版への自動切り替え ----------
+// ホーム画面のアプリは裏で開いたままになりやすいので、戻ってきたときにも新しい版を確かめ、
+// 届いたら再読み込みする。声で数えている最中や入力中は、アプリを離れたときまで待つ
+function setupUpdates() {
+  const sw = navigator.serviceWorker;
+  let hasController = Boolean(sw.controller); // 初めて入ったとき（controller なし → あり）は再読み込みしない
+  let registration = null;
+  let pendingReload = false;
+
+  const busy = () => Boolean(listener?.active || document.querySelector('dialog[open]') || !$('celebrate').hidden);
+  const reload = () => {
+    try { sessionStorage.setItem(UPDATED_KEY, '1'); } catch { /* 知らせが出ないだけ */ }
+    location.reload();
+  };
+
+  sw.addEventListener('controllerchange', () => {
+    if (!hasController) {
+      hasController = true;
+      return;
+    }
+    if (busy()) pendingReload = true;
+    else reload();
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden' && pendingReload) reload();
+    if (document.visibilityState === 'visible') registration?.update().catch(() => {});
+  });
+  // 入力などが終わったら切り替える
+  setInterval(() => { if (pendingReload && !busy()) reload(); }, 3000);
+
+  sw.register('sw.js')
+    .then((r) => { registration = r; })
+    .catch((e) => console.warn('Service Worker 登録失敗', e));
+
+  try {
+    if (sessionStorage.getItem(UPDATED_KEY)) {
+      sessionStorage.removeItem(UPDATED_KEY);
+      toast($('toast'), '最新版になりました');
+    }
+  } catch { /* 知らせが出ないだけ */ }
 }
