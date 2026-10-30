@@ -5,7 +5,7 @@ import { crossed, EARLY } from './milestones.js';
 import { FLOWERS, flowerSVG, budSVG, ICONS } from './flowers.js';
 import { renderWeek } from './chart.js';
 import { createListener, isSupported } from './speech.js';
-import { setupCelebrate, celebrate, toast, floatUp, unlockAudio, chime, buzz } from './celebrate.js';
+import { setupCelebrate, celebrate, toast, floatUp, petalBurst, unlockAudio, chime, buzz } from './celebrate.js';
 
 const $ = (id) => document.getElementById(id);
 const fmt = (n) => n.toLocaleString('ja-JP');
@@ -88,13 +88,19 @@ function pop() {
 }
 
 // ---------- 数える ----------
-function count(n, source) {
+/** point: タップした位置（tapBtn の左上から）。なければまるの中心から花びらが出る */
+function count(n, source, point) {
   const r = add(state, n, source);
   if (!r) return;
   save(state);
   render();
   pop();
-  floatUp($('tapBtn'), source === 'bulk' ? `+${fmt(n)}` : n > 1 ? `ありがとう ×${n}` : '+1');
+  if (source === 'bulk') {
+    floatUp($('tapBtn'), `+${fmt(n)}`);
+  } else {
+    petalBurst($('tapBtn'), point?.x, point?.y);
+    floatUp($('tapBtn'), 'ありがとう');
+  }
   requestPersistence();
   announce(r.from, r.to);
 }
@@ -139,9 +145,12 @@ function announce(from, to) {
   }
 }
 
-$('tapBtn').addEventListener('click', () => {
+$('tapBtn').addEventListener('click', (e) => {
   unlockAudio();
-  count(1, 'tap');
+  // キーボード操作（detail === 0）のときは中心から
+  const rect = e.currentTarget.getBoundingClientRect();
+  const point = e.detail ? { x: e.clientX - rect.left, y: e.clientY - rect.top } : null;
+  count(1, 'tap', point);
 });
 
 $('undoBtn').addEventListener('click', () => {

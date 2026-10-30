@@ -166,7 +166,32 @@ export function toast(el, text, ms = 2200) {
   toastTimer = setTimeout(() => el.classList.remove('show'), ms);
 }
 
-// ---- +1 がふわっと浮かぶ ----
+// ---- タップしたところから花びらがはじける ----
+// x, y は anchor の左上からの位置。省略すると中心
+export function petalBurst(anchor, x, y) {
+  if (reduceMotion()) return;
+  x ??= anchor.clientWidth / 2;
+  y ??= anchor.clientHeight / 2;
+  const count = 9;
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('span');
+    p.className = 'burst-petal';
+    p.style.left = `${x}px`;
+    p.style.top = `${y}px`;
+    p.style.background = PETAL_COLORS[i % PETAL_COLORS.length];
+    anchor.append(p);
+    const a = (Math.PI * 2 * i) / count + Math.random() * 0.4;
+    const dist = 45 + Math.random() * 30;
+    // 2フレーム待ってから動かすと transition が効く
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      p.style.transform = `translate(${Math.cos(a) * dist}px, ${Math.sin(a) * dist}px) rotate(${Math.random() * 360}deg)`;
+      p.style.opacity = '0';
+    }));
+    setTimeout(() => p.remove(), 800);
+  }
+}
+
+// ---- ことばがふわっと浮かぶ ----
 export function floatUp(anchor, text) {
   if (reduceMotion()) return;
   const s = document.createElement('span');
