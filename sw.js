@@ -1,6 +1,6 @@
 // オフライン対応。アプリ本体は先にまとめてキャッシュし、更新はバージョンを上げて配る。
 // ファイルを変更したら VERSION を上げること。
-const VERSION = 'v3';
+const VERSION = 'v4';
 const APP_CACHE = `arigato-app-${VERSION}`;
 const FONT_CACHE = 'arigato-fonts';
 
@@ -23,7 +23,10 @@ const APP_FILES = [
 ];
 
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(APP_CACHE).then((c) => c.addAll(APP_FILES)).then(() => self.skipWaiting()));
+  // GitHub Pages は max-age=600 で配るため、ブラウザの HTTP キャッシュを通すと古いファイルを取り込んでしまう。
+  // cache: 'reload' で必ずサーバーから取り直す
+  const requests = APP_FILES.map((url) => new Request(url, { cache: 'reload' }));
+  e.waitUntil(caches.open(APP_CACHE).then((c) => c.addAll(requests)).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', (e) => {
