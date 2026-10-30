@@ -1,6 +1,6 @@
 // オフライン対応。アプリ本体は先にまとめてキャッシュし、更新はバージョンを上げて配る。
 // ファイルを変更したら VERSION を上げること。
-const VERSION = 'v7';
+const VERSION = 'v8';
 const APP_CACHE = `arigato-app-${VERSION}`;
 const FONT_CACHE = 'arigato-fonts';
 

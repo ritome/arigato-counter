@@ -5,7 +5,7 @@ import { crossed, EARLY } from './milestones.js';
 import { FLOWERS, flowerSVG, budSVG, ICONS } from './flowers.js';
 import { renderWeek } from './chart.js';
 import { createListener, isSupported } from './speech.js';
-import { setupCelebrate, celebrate, toast, floatUp, petalBurst, unlockAudio, chime, buzz } from './celebrate.js';
+import { setupCelebrate, celebrate, toast, floatUp, sparkleBurst, unlockAudio, chime, buzz } from './celebrate.js';
 
 const $ = (id) => document.getElementById(id);
 const fmt = (n) => n.toLocaleString('ja-JP');
@@ -88,7 +88,7 @@ function pop() {
 }
 
 // ---------- 数える ----------
-/** point: タップした位置（tapBtn の左上から）。なければまるの中心から花びらが出る */
+/** point: タップした位置（tapBtn の左上から）。なければまるの中心からキラキラが出る */
 function count(n, source, point) {
   const r = add(state, n, source);
   if (!r) return;
@@ -98,7 +98,7 @@ function count(n, source, point) {
   if (source === 'bulk') {
     floatUp($('tapBtn'), `+${fmt(n)}`);
   } else {
-    petalBurst($('tapBtn'), point?.x, point?.y);
+    sparkleBurst($('tapBtn'), point?.x, point?.y);
     floatUp($('tapBtn'), 'ありがとう');
   }
   requestPersistence();

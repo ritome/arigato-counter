@@ -166,28 +166,30 @@ export function toast(el, text, ms = 2200) {
   toastTimer = setTimeout(() => el.classList.remove('show'), ms);
 }
 
-// ---- タップしたところから花びらがはじける ----
+// ---- タップしたところから小さなキラキラが広がる ----
 // x, y は anchor の左上からの位置。省略すると中心
-export function petalBurst(anchor, x, y) {
+const SPARKLE_COLORS = ['#F5C842', '#F6B8C8', '#FAC775', '#F4C0D1'];
+const STAR = 'M10 0 L12 8 L20 10 L12 12 L10 20 L8 12 L0 10 L8 8Z';
+
+export function sparkleBurst(anchor, x, y) {
   if (reduceMotion()) return;
   x ??= anchor.clientWidth / 2;
   y ??= anchor.clientHeight / 2;
-  const count = 9;
+  const count = 7;
   for (let i = 0; i < count; i++) {
-    const p = document.createElement('span');
-    p.className = 'burst-petal';
-    p.style.left = `${x}px`;
-    p.style.top = `${y}px`;
-    p.style.background = PETAL_COLORS[i % PETAL_COLORS.length];
-    anchor.append(p);
-    const a = (Math.PI * 2 * i) / count + Math.random() * 0.4;
-    const dist = 45 + Math.random() * 30;
-    // 2フレーム待ってから動かすと transition が効く
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      p.style.transform = `translate(${Math.cos(a) * dist}px, ${Math.sin(a) * dist}px) rotate(${Math.random() * 360}deg)`;
-      p.style.opacity = '0';
-    }));
-    setTimeout(() => p.remove(), 800);
+    const a = (Math.PI * 2 * i) / count + Math.random() * 0.6;
+    const dist = 22 + Math.random() * 26;
+    const size = 8 + Math.random() * 5;
+    const s = document.createElement('span');
+    s.className = 'sparkle';
+    s.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 20 20" aria-hidden="true"><path d="${STAR}" fill="${SPARKLE_COLORS[i % SPARKLE_COLORS.length]}"/></svg>`;
+    s.style.left = `${x}px`;
+    s.style.top = `${y}px`;
+    s.style.setProperty('--dx', `${Math.cos(a) * dist}px`);
+    s.style.setProperty('--dy', `${Math.sin(a) * dist}px`);
+    s.style.animationDuration = `${0.7 + Math.random() * 0.25}s`;
+    anchor.append(s);
+    setTimeout(() => s.remove(), 1000);
   }
 }
 
