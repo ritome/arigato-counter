@@ -178,7 +178,6 @@
 
 <!-- お祝い -->
 <div class="celebrate" id="celebrate" hidden>
-  <canvas aria-hidden="true"></canvas>
   <div class="celebrate-card" role="dialog" aria-modal="true" aria-labelledby="celebrateTitle">
     <div class="celebrate-art" data-art></div>
     <p class="kicker" data-kicker></p>
@@ -192,6 +191,16 @@
   </div>
 </div>
 
+<!-- 1,000回ごとのお知らせ -->
+<div class="banner" id="banner" role="status" aria-live="polite" hidden>
+  <div class="banner-art" data-art></div>
+  <div>
+    <p class="banner-title" data-title></p>
+    <p class="banner-msg" data-message></p>
+  </div>
+</div>
+
+<canvas class="rain" id="rain" aria-hidden="true"></canvas>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>

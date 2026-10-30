@@ -51,10 +51,10 @@ function ring(color, n, shape, len, offset = 0) {
   return s;
 }
 
-/** i: 0〜49 */
-export function flowerSVG(i, extraClass = '') {
+// 花の中身（40x40 の座標）。flowerSVG と wreathSVG で共通
+function flowerBody(i) {
   const [, color, n, center, shape] = FLOWERS[i];
-  let s = `<svg class="flower ${extraClass}" viewBox="0 0 40 40" aria-hidden="true"><g stroke="rgba(60,40,30,.18)" stroke-width=".5">`;
+  let s = '<g stroke="rgba(60,40,30,.18)" stroke-width=".5">';
   if (shape === 'layered') {
     s += ring(color, n, 'round', 18);
     s += `<g opacity=".85" style="filter:brightness(1.12)">${ring(color, n, 'round', 12.5, 180 / n)}</g>`;
@@ -62,7 +62,37 @@ export function flowerSVG(i, extraClass = '') {
     s += ring(color, n, shape, 18);
   }
   s += `<circle cx="20" cy="20" r="${n > 10 ? 6 : 4.8}" fill="${center}"/></g>`;
-  s += `<circle cx="18.4" cy="18.4" r="1.4" fill="#fff" opacity=".45"/></svg>`;
+  s += '<circle cx="18.4" cy="18.4" r="1.4" fill="#fff" opacity=".45"/>';
+  return s;
+}
+
+/** i: 0〜49 */
+export function flowerSVG(i, extraClass = '') {
+  return `<svg class="flower ${extraClass}" viewBox="0 0 40 40" aria-hidden="true">${flowerBody(i)}</svg>`;
+}
+
+/**
+ * 咲いた花を輪に並べた「花の輪」。count 輪（1輪目から）を、1輪ずつ順に現れるよう並べる。
+ * 26輪以上は外と内の二重の輪にする。label は中央の文字
+ */
+export function wreathSVG(count, label, { stagger = 0.09 } = {}) {
+  const C = 150;
+  const rings = count > 25 ? [[0, Math.ceil(count * 0.58), 112], [Math.ceil(count * 0.58), count, 78]] : [[0, count, 104]];
+  let s = `<svg class="wreath" viewBox="0 0 300 300" aria-hidden="true">`;
+  s += `<circle cx="${C}" cy="${C}" r="${rings[0][2]}" fill="none" stroke="var(--leaf)" stroke-width="3" opacity=".35"/>`;
+  for (const [from, to, r] of rings) {
+    const n = to - from;
+    const size = Math.min(46, ((2 * Math.PI * r) / n) * 1.25);
+    for (let k = 0; k < n; k++) {
+      const i = from + k;
+      const a = -Math.PI / 2 + (2 * Math.PI * k) / n;
+      const x = C + r * Math.cos(a) - size / 2;
+      const y = C + r * Math.sin(a) - size / 2;
+      s += `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${(size / 40).toFixed(3)})">`;
+      s += `<g class="wf" style="animation-delay:${(i * stagger).toFixed(2)}s">${flowerBody(i)}</g></g>`;
+    }
+  }
+  s += `<text x="${C}" y="${C + 12}" text-anchor="middle" class="wreath-label">${label}</text></svg>`;
   return s;
 }
 
@@ -82,5 +112,6 @@ export const ICONS = {
   sprout: `<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 34 V20" stroke="#5E9C76" stroke-width="2.4" stroke-linecap="round"/><path d="M20 22 C14 22 9 18 9 12 C15 12 20 15 20 22Z" fill="#7DBA8F"/><path d="M20 20 C25 20 31 16 31 9 C24 9 20 13 20 20Z" fill="#5E9C76"/></svg>`,
   leaf: `<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 35 V14" stroke="#5E9C76" stroke-width="2.4" stroke-linecap="round"/><path d="M20 26 C12 26 7 21 7 14 C14 14 20 18 20 26Z" fill="#7DBA8F"/><path d="M20 22 C28 22 33 17 33 10 C26 10 20 14 20 22Z" fill="#5E9C76"/><path d="M20 15 C17 12 17 7 20 4 C23 7 23 12 20 15Z" fill="#9BCDA9"/></svg>`,
   bud: `<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 36 V18" stroke="#5E9C76" stroke-width="2.4" stroke-linecap="round"/><path d="M20 30 C13 30 9 26 9 21 C15 21 20 24 20 30Z" fill="#7DBA8F"/><ellipse cx="20" cy="12" rx="6" ry="8.5" fill="#E0607E"/><path d="M14 14 Q20 22 26 14 Q24 21 20 21 Q16 21 14 14Z" fill="#5E9C76"/></svg>`,
+  medal: `<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M13 22 L9 37 L15 34 L18 39 L21 26Z" fill="#E0607E"/><path d="M27 22 L31 37 L25 34 L22 39 L19 26Z" fill="#C9466A"/><circle cx="20" cy="17" r="12" fill="#F5C842" stroke="#E8A93A" stroke-width="1.5"/><path d="M20 9.5 L22.2 14.6 L27.6 15 L23.4 18.5 L24.8 23.8 L20 20.9 L15.2 23.8 L16.6 18.5 L12.4 15 L17.8 14.6Z" fill="#FFF6D6"/></svg>`,
   star: `<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 5 L24.2 15 L35 15.8 L26.8 22.8 L29.3 33.4 L20 27.6 L10.7 33.4 L13.2 22.8 L5 15.8 L15.8 15Z" fill="#F5C842" stroke="#E8A93A" stroke-width="1" stroke-linejoin="round"/></svg>`,
 };

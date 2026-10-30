@@ -42,21 +42,31 @@ test('0 や負の数は足さない', () => {
   assert.equal(totalOf(s), 0);
 });
 
-test('節目: 100/500/1000 と花とキリ番', () => {
+test('節目: 100ごと・100/500/1000・キリ番・花', () => {
   assert.deepEqual(crossed(99, 100), [{ kind: 'early', at: 100 }]);
+  assert.deepEqual(crossed(199, 200), [{ kind: 'hundred', at: 200 }]);
+  assert.deepEqual(crossed(499, 500), [{ kind: 'early', at: 500 }]);
   assert.deepEqual(crossed(999, 1000), [{ kind: 'early', at: 1000 }]);
   assert.deepEqual(crossed(1999, 2000), [{ kind: 'kiriban', at: 2000 }]);
+  assert.deepEqual(crossed(2099, 2100), [{ kind: 'hundred', at: 2100 }]);
   assert.deepEqual(crossed(9999, 10000), [{ kind: 'flower', at: 10000, flower: 1 }]);
   assert.deepEqual(crossed(100, 100), []);
-  assert.deepEqual(crossed(101, 499), []);
+  assert.deepEqual(crossed(101, 199), []);
+});
+
+test('節目: 10万ごとは花束、50万は満開', () => {
+  for (const m of [10, 20, 30, 40]) {
+    assert.deepEqual(crossed(m * 10000 - 1, m * 10000)[0], { kind: 'bouquet', at: m * 10000, flower: m });
+  }
+  assert.deepEqual(crossed(499999, 500000), [{ kind: 'goal', at: 500000, flower: 50 }]);
+  assert.equal(crossed(500000, 600000).length, 0);
 });
 
 test('節目: まとめ足しで複数越えたら大きい順', () => {
-  const ev = crossed(0, 25000);
+  const ev = crossed(0, 25050);
   assert.deepEqual(ev.map((e) => e.kind), ['flower', 'flower', 'early', 'early', 'early', 'kiriban']);
   assert.equal(ev[0].flower, 2);
-  assert.equal(crossed(499999, 500000)[0].kind, 'goal');
-  assert.equal(crossed(500000, 600000).length, 0);
+  assert.deepEqual(crossed(95000, 101200).map((e) => e.kind), ['bouquet', 'kiriban', 'hundred']);
 });
 
 test('復元: 不正な値を捨て、旧版の形式も読める', () => {

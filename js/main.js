@@ -2,21 +2,38 @@ import {
   GOAL, FLOWER_STEP, FLOWER_COUNT, STORAGE_KEY, load, save, add, undo, reset, totalOf, bloomedCount, dayKey, normalize,
 } from './store.js';
 import { crossed, EARLY } from './milestones.js';
-import { FLOWERS, flowerSVG, budSVG, ICONS } from './flowers.js';
+import { FLOWERS, flowerSVG, budSVG, wreathSVG, ICONS } from './flowers.js';
 import { renderWeek } from './chart.js';
 import { createListener, isSupported } from './speech.js';
-import { setupCelebrate, celebrate, toast, floatUp, sparkleBurst, unlockAudio, chime, buzz } from './celebrate.js';
+import {
+  setupCelebrate, setupRain, celebrate, isCelebrating, banner, cheer, toast, floatUp, sparkleBurst, unlockAudio, chime, buzz,
+} from './celebrate.js';
 
 const $ = (id) => document.getElementById(id);
 const fmt = (n) => n.toLocaleString('ja-JP');
 
 const FLOWER_MESSAGES = {
   1: '最初の1輪！ 1万回のありがとうが、花になりました。',
-  10: '10輪目。10万回のありがとうが、たくさんの人に届いています。',
   25: '25輪目、ちょうど折り返し！ 花畑のまんなかまで来ました。',
-  40: '40輪目。ここまで続けてきたこと、ほんとうにすごい。',
   49: '49輪目。残るはあと1輪、ありがとうの大輪だけです。',
 };
+
+// 10万回ごとの花の輪
+const BOUQUETS = {
+  10: { title: '10万回の花束', message: '10輪の花で、最初の花の輪ができました。ここまで続けてきた毎日に、心からありがとう。' },
+  20: { title: '20万回の花かご', message: '20輪の花が集まりました。あなたの「ありがとう」は、もう20万回も誰かに届いています。' },
+  30: { title: '30万回の花かんむり', message: '30輪。花畑の半分以上が色づきました。続けてきたこと自体が、いちばんの贈りものです。' },
+  40: { title: '40万回の花のアーチ', message: '40輪。満開まで、あと10輪です。奇跡の日は、もうすぐそこに。' },
+};
+
+// 1,000回ごとのお知らせの一言（順番に替わる）
+const KIRIBAN_MESSAGES = [
+  'ありがとうが、またひとつ積み重なりました',
+  '小さな言葉が、大きな力になっています',
+  '今日もありがとうを届けてくれて、ありがとう',
+  '一歩ずつ、次の花に近づいています',
+  'あなたのありがとうで、まわりが明るくなっています',
+];
 
 let state = load();
 
@@ -110,19 +127,39 @@ function announce(from, to) {
   if (!events.length) return;
   const top = events[0];
   const opts = { sound: state.settings.sound, vibrate: state.settings.vibrate };
+  const glow = (m) => () => {
+    const plot = $('garden').querySelector(`[data-m="${m}"]`);
+    plot?.classList.add('glow');
+    setTimeout(() => plot?.classList.remove('glow'), 5000);
+  };
 
   if (top.kind === 'goal') {
     celebrate({
-      ...opts, level: 'grand', art: flowerSVG(49, 'spin'), kicker: '500,000回 達成',
-      title: '花畑が満開です！',
-      message: '50輪すべての花が咲きました。50万回のありがとう、本当におめでとうございます。',
+      ...opts, level: 'miracle', art: wreathSVG(50, '50万', { stagger: 0.06 }), kicker: '500,000回 ・ 50輪 満開',
+      title: '奇跡の満開',
+      message: '50万回の「ありがとう」が、50輪の花になりました。ひとつひとつの言葉が、まわりの人とあなた自身を照らしてきました。本当に、本当におめでとうございます。',
       reward: state.rewards[50],
+      okLabel: 'ありがとう',
+      onClose: glow(50),
+    });
+  } else if (top.kind === 'bouquet') {
+    const m = top.flower;
+    const b = BOUQUETS[m];
+    celebrate({
+      ...opts, level: 'bouquet', art: wreathSVG(m, `${m}万`), kicker: `${fmt(top.at)}回`,
+      title: b.title,
+      message: `${b.message}（${m}輪目は「${FLOWERS[m - 1][0]}」）`,
+      reward: state.rewards[m],
+      okLabel: 'ありがとう',
+      actionLabel: state.rewards[m] ? '' : 'ごほうびを決める',
+      onAction: () => openReward(m),
+      onClose: glow(m),
     });
   } else if (top.kind === 'flower') {
     const flowers = events.filter((e) => e.kind === 'flower');
     const m = top.flower;
     celebrate({
-      ...opts, level: 'big', art: flowerSVG(m - 1, 'spin'),
+      ...opts, level: 'big', art: flowerSVG(m - 1, 'grow'),
       kicker: `${fmt(top.at)}回 ・ ${m}輪目`,
       title: `「${FLOWERS[m - 1][0]}」が咲きました`,
       message: flowers.length > 1
@@ -131,6 +168,7 @@ function announce(from, to) {
       reward: state.rewards[m],
       actionLabel: state.rewards[m] ? '' : 'ごほうびを決める',
       onAction: () => openReward(m),
+      onClose: glow(m),
     });
   } else if (top.kind === 'early') {
     const e = EARLY[top.at];
@@ -138,10 +176,14 @@ function announce(from, to) {
       ...opts, level: 'small', art: ICONS[e.icon], kicker: 'おめでとう',
       title: e.title, message: e.message,
     });
+  } else if (top.kind === 'kiriban') {
+    if (isCelebrating()) return;
+    banner($('banner'), {
+      ...opts, art: ICONS.medal, title: `${fmt(top.at)}回！`,
+      message: KIRIBAN_MESSAGES[(top.at / 1000) % KIRIBAN_MESSAGES.length],
+    });
   } else {
-    toast($('toast'), `🎉 ${fmt(top.at)}回 キリ番！`);
-    if (opts.sound) chime('small');
-    if (opts.vibrate) buzz(40);
+    cheer($('tapBtn'), `${fmt(top.at)}回！`, opts);
   }
 }
 
@@ -397,6 +439,7 @@ addEventListener('storage', (e) => {
 });
 
 setupCelebrate($('celebrate'));
+setupRain($('rain'));
 render();
 
 // 開発中（localhost）はキャッシュが邪魔になるので登録しない。?sw を付けるとオフライン動作を確認できる
